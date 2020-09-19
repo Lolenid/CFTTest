@@ -25,6 +25,7 @@
         android:layout_marginTop="32dp"
         android:text="@string/button_select"
         app:layout_constraintStart_toStartOf="parent"
+        android:onClick="onClickLeftButton"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <TextView
