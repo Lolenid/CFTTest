@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">CFTTest</string>
+    <string name="app_name">Конвертор валют</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_value">0.0</string>
+    <string name="hint_valute">Не выбрана</string>
+    <string name="button_select">Изменить валюту</string>
+    <string name="image_description">Сменить направление</string>
 </resources>
