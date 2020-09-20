@@ -1,5 +1,8 @@
 package com.example.cfttest;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -14,6 +17,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +37,7 @@ public class ValuteList extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private static final String URL_CONNECTION = "http://www.cbr.ru/scripts/XML_daily.asp";
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -71,32 +80,26 @@ public class ValuteList extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_valute_list, container, false);
-
         recyclerView = view.findViewById(R.id.valuteRecycler);
-        valutes = new ArrayList<>();
-        valutes.add(new Valute("id","numCode", "charCode", 10, "name", 3.4d));
-        valutes.add(new Valute("id2","numCode2", "charCode2", 11, "name2", 3.5d));
-        ValuteAdapter valuteAdapter = new ValuteAdapter(valutes, new ValuteListener());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(valuteAdapter);
+
+//        recyclerView.setAdapter(valuteAdapter);
         return view;
     }
 
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        loadData();
-//        Log.v("myTag", "size : " + valutes.size());
-//        ValuteAdapter valuteAdapter = new ValuteAdapter(valutes);
-//        recyclerView.setAdapter(valuteAdapter);
-//    }
-//    private void loadData(){
-//        valutes = new ArrayList<>();
-//        valutes.add(new Valute("id","numCode", "charCode", 10, "name", 3.4d));
-//        valutes.add(new Valute("id2","numCode2", "charCode2", 11, "name2", 3.5d));
-////        recyclerView.getAdapter().notifyDataSetChanged();
-//    }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        loadData();
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        ValuteAdapter valuteAdapter = new ValuteAdapter(valutes, new ValuteListener());
+        recyclerView.setAdapter(valuteAdapter);
+    }
+    private void loadData(){
+        valutes = new ArrayList<>();
+        new DowlandXml().execute(URL_CONNECTION);
+    }
+
     private class ValuteListener implements ValuteAdapter.Listener{
         @Override
         public void onValuteSelected(Valute valute, View view) {
@@ -105,5 +108,103 @@ public class ValuteList extends Fragment {
         }
 
     }
+    private class DowlandXml extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                XmlParser xmlParser = new XmlParser();
+                InputStream stream = downloadUrl(URL_CONNECTION);
+
+                valutes = xmlParser.parse(stream);
+              //  recyclerView.getAdapter().notifyDataSetChanged();
+                Log.d("myTag", "Size : " + valutes.size());
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
+
+        private InputStream downloadUrl(String urlString) throws IOException {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            // Starts the query
+            conn.connect();
+            return conn.getInputStream();
+        }
+    }
+//    private class DowlandXml extends AsyncTask<String, Void, String> {
+//        private List<Valute> valutes;
+//        private Context context;
+//
+//        public DowlandXml(Context context) {
+//            this.context = context;
+//        }
+//
+//        @Override
+//        protected String doInBackground(String... urls) {
+//            try {
+//                XmlParser xmlParser = new XmlParser();
+//                InputStream stream = downloadUrl(URL_CONNECTION);
+//
+//                valutes = xmlParser.parse(stream);
+//                Log.d("myTag", "Size : " + valutes.size());
+//
+//                return valutes.get(0).getId();
+//
+//            } catch (XmlPullParserException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//        private InputStream downloadUrl(String urlString) throws IOException {
+//            URL url = new URL(urlString);
+//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//            conn.setReadTimeout(10000 /* milliseconds */);
+//            conn.setConnectTimeout(15000 /* milliseconds */);
+//            conn.setRequestMethod("GET");
+//            conn.setDoInput(true);
+//            // Starts the query
+//            conn.connect();
+//            return conn.getInputStream();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            setContentView(R.layout.activity_valute_detail);
+//            RecyclerView recyclerView = findViewById(R.id.recyclerView);
+//            //Log.d("myTag", "Size2 : " + valutes.size());
+//            ValuteAdapter valuteAdapter = new ValuteAdapter(valutes);
+////
+//            valuteAdapter.setListener(new ValuteAdapter.Listener() {
+//                @Override
+//                public void onClick(int position) {
+//                    Log.v("myTag", "click on + " + position);
+//                    Intent intent = new Intent(context, MainActivity.class);
+//                    intent.putExtra(MainActivity.EXTRA_VALUTE, valutes.get(position));
+//                    context.startActivity(intent);
+//                }
+//            });
+////            recyclerView.getAdapter().notifyDataSetChanged();
+//            recyclerView.setAdapter(valuteAdapter);
+//            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+//            recyclerView.setLayoutManager(linearLayoutManager);
+//            //recyclerView.getAdapter().notifyDataSetChanged();
+//        }
+//
+//    }
 }
 
