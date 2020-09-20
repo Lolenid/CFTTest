@@ -12,10 +12,17 @@
         <action
             android:id="@+id/action_convertor_to_valuteList"
             app:destination="@id/valuteList" />
+        <argument
+            android:name="selectValute"
+            app:argType="com.example.cfttest.Valute" />
     </fragment>
     <fragment
         android:id="@+id/valuteList"
         android:name="com.example.cfttest.ValuteList"
         android:label="@string/name_fragment_list"
-        tools:layout="@layout/fragment_valute_list" />
+        tools:layout="@layout/fragment_valute_list" >
+        <action
+            android:id="@+id/action_valuteList_to_convertor"
+            app:destination="@id/convertor" />
+    </fragment>
 </navigation>

@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -74,7 +76,7 @@ public class ValuteList extends Fragment {
         valutes = new ArrayList<>();
         valutes.add(new Valute("id","numCode", "charCode", 10, "name", 3.4d));
         valutes.add(new Valute("id2","numCode2", "charCode2", 11, "name2", 3.5d));
-        ValuteAdapter valuteAdapter = new ValuteAdapter(valutes);
+        ValuteAdapter valuteAdapter = new ValuteAdapter(valutes, new ValuteListener());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(valuteAdapter);
@@ -95,4 +97,13 @@ public class ValuteList extends Fragment {
 //        valutes.add(new Valute("id2","numCode2", "charCode2", 11, "name2", 3.5d));
 ////        recyclerView.getAdapter().notifyDataSetChanged();
 //    }
+    private class ValuteListener implements ValuteAdapter.Listener{
+        @Override
+        public void onValuteSelected(Valute valute, View view) {
+            NavDirections action = ValuteListDirections.actionValuteListToConvertor(valute);
+            Navigation.findNavController(view).navigate(action);
+        }
+
+    }
 }
+

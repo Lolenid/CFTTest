@@ -1,5 +1,6 @@
 package com.example.cfttest;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,14 @@ import java.util.List;
 
 public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ViewHolder> {
     private List<Valute> valutes;
+    private Listener listener;
 
-    public ValuteAdapter(List<Valute> valutes) {
+    public interface Listener{
+        void onValuteSelected(Valute valute, View view);
+    }
+    public ValuteAdapter(List<Valute> valutes, Listener listener) {
         this.valutes = valutes;
+        this.listener = listener;
     }
 
     @NonNull
@@ -40,10 +46,19 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView nameText;
         private TextView charCodeText;
-        public ViewHolder(@NonNull View itemView) {
+
+        public ViewHolder(@NonNull final View itemView) {
             super(itemView);
             nameText = itemView.findViewById(R.id.nameText);
             charCodeText = itemView.findViewById(R.id.charCodeText);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.v("myTag", "size : " + valutes.size());
+                    Log.v("myTag", "getAdapterPosition : " + getAdapterPosition());
+                    listener.onValuteSelected(valutes.get(getAdapterPosition()), itemView);
+                }
+            });
         }
     }
 }

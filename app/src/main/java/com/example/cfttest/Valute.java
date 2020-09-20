@@ -1,6 +1,8 @@
 package com.example.cfttest;
 
-public class Valute {
+import java.io.Serializable;
+
+public class Valute implements Serializable {
     private String id;
     private String numCode;
     private String charCode;
