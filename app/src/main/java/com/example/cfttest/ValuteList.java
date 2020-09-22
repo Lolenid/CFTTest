@@ -26,16 +26,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ValuteList#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ValuteList extends Fragment {
     private static final String URL_CONNECTION = "https://www.cbr.ru/scripts/XML_daily.asp";
 
     private RecyclerView recyclerView;
     private List<Valute> valutes;
+    private String button;
+    private static final String KEY_BUTTON = "button";
 
     public ValuteList() {
         // Required empty public constructor
@@ -44,6 +41,9 @@ public class ValuteList extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null){
+            button = getArguments().getString(KEY_BUTTON);
+        }
     }
 
     @Override
@@ -73,7 +73,9 @@ public class ValuteList extends Fragment {
     private class ValuteListener implements ValuteAdapter.Listener{
         @Override
         public void onValuteSelected(Valute valute, View view) {
-            NavDirections action = ValuteListDirections.actionValuteListToConvertor(valute);
+            ValuteListDirections.ActionValuteListToConvertor action = ValuteListDirections.actionValuteListToConvertor();
+            action.setSelectButton(button);
+            action.setSelectValute(valute);
             Navigation.findNavController(view).navigate(action);
         }
 

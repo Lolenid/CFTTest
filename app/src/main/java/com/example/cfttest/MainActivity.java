@@ -11,7 +11,8 @@ import android.os.Bundle;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
-private NavController navController;
+    private static final String KEY_BUTTON = "button";
+    private NavController navController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +26,14 @@ private NavController navController;
     }
 
     public void onClickLeftButton(View view) {
-        navController.navigate(R.id.action_convertor_to_valuteList);
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_BUTTON, "left");
+        navController.navigate(R.id.action_convertor_to_valuteList, bundle);
+    }
+
+    public void onClickRightButton(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_BUTTON, "right");
+        navController.navigate(R.id.action_convertor_to_valuteList, bundle);
     }
 }

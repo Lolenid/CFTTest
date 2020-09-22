@@ -14,7 +14,13 @@
             app:destination="@id/valuteList" />
         <argument
             android:name="selectValute"
-            app:argType="com.example.cfttest.Valute" />
+            app:argType="com.example.cfttest.Valute"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="selectButton"
+            app:argType="string"
+            android:defaultValue="null" />
     </fragment>
     <fragment
         android:id="@+id/valuteList"
